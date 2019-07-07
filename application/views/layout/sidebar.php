@@ -3,13 +3,13 @@
 <!-- Sidebar -->
 <ul class="sidebar navbar-nav">
   <li class="nav-item active">
-    <a class="nav-link" href="index.html">
+    <a class="nav-link" href="<?php echo base_url()."index.php/Memberctrl/index "?>">
       <i class="fas fa-fw fa-tachometer-alt"></i>
       <span>Home</span>
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="<?php echo base_url()."index.php/Memberctrl/index "?>">
       <i class="fas fa-fw fa-user "></i>
       <span>Data Member</span>
     </a>

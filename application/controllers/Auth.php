@@ -3,7 +3,11 @@ class Auth extends CI_Controller {
     public function __construct()
     {
 		parent::__construct();
-		$this->load->model('login_model');
+		
+		$this->load->helper('url');
+		$this->load->helper('form');
+		$this->load->library('session');
+		$this->load->model('auth_model');
 	}
 	public function index()
 	{
@@ -11,27 +15,36 @@ class Auth extends CI_Controller {
 		
 	}
 
-	public function auth(){
+	public function login(){
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
+		$q = "SELECT * FROM member WHERE email = '$email'";
+		$hasil = $this->db->query($q);
+		$result = $hasil->row();
+		var_dump($result);
+		if ($result) {
+			if ($password == $result->password) {
+				$this->session->login_status = True;
+				$this->session->email = $email;
+				$this->session->role = $result->role;
 
-		if($validate->num_rows()>0){
-			$data = $validate->row_array();
-			$email = $data['email'];
-			$password = $data ['password'];
-			$role = $data['role'];
-			$sesdata = array(
-				'email' => $email,
-				'password' =>$password,
-				'role' => $role,
-				'logged_in'=> TRUE);
-			$this->session->set_userdata($sesdata);
+				redirect('memberctrl');
+			} else {
+				$data['errmsg'] = "Maaf password salah";
+				$data['page'] = 'login';
+				$this->load->view('login', $data);
+			}
+		}	else {
+			$data['errmsg'] = "Maaf username tidak terdaftar";
+			$data['page'] = 'login/form_login';
+			$this->load->view('login', $data);
 		}
+		
 	}
 
 	function logout(){
-		$this->session->session_destroy();
-		redirect('login');
+		session_destroy();
+		redirect('Auth/index');
 	}
 
 }

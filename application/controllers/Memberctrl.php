@@ -20,9 +20,13 @@ class Memberctrl extends CI_Controller {
 	 */
 	public function __construct(){
 		parent::__construct();
-		$this->load->database();
-        $this->load->model("model_member");
-        $this->load->library("form_validation");
+			$this->load->library('session');
+			$this->load->database();
+        	$this->load->model("model_member");
+			$this->load->library("form_validation");
+			$this->load->library("pdf");
+		
+		
 	}
 
 	 public function index()
@@ -40,7 +44,7 @@ class Memberctrl extends CI_Controller {
 	}
 	
 	public function view($id_member){
-		$this->db->where('id_member', $id_member);
+		$this->db->where('id', $id_member);
 		$data['member'] = $this->db->get('member');
 		$data['konten'] = "viewdata";
 		$this->load->view('layout/penghubung', $data);
@@ -88,5 +92,29 @@ class Memberctrl extends CI_Controller {
 		
 		redirect('Memberctrl/index');
 	}
+
+	function cetak(){
+        $pdf = new FPDF('l','mm','A5');
+        // membuat halaman baru
+        $pdf->AddPage();
+        // setting jenis font yang akan digunakan
+        $pdf->SetFont('Arial','B',16);
+        // mencetak string 
+        $pdf->Cell(190,7,'DAFTAR MEMBER',0,1,'C');
+        // Memberikan space kebawah agar tidak terlalu rapat
+        $pdf->Cell(10,7,'',0,1);
+        $pdf->SetFont('Arial','B',10);
+        $pdf->Cell(85,6,'NAMA MEMBER',1,0);
+        $pdf->Cell(27,6,'NO HP',1,0);
+        $pdf->Cell(55,6,'ALAMAT',1,1);
+        $pdf->SetFont('Arial','',10);
+        $member = $this->db->get('member')->result();
+        foreach ($member as $row){
+            $pdf->Cell(85,6,$row->nama_member,1,0);
+            $pdf->Cell(27,6,$row->no_telpon,1,0);
+            $pdf->Cell(55,6,$row->alamat,1,1); 
+        }
+        $pdf->Output();
+    }
 }
 ?>
